@@ -94,7 +94,7 @@ struct FileUploadView: View {
                                 .foregroundStyle(selectedFileIDs.contains(file.persistentModelID) ? Color.accentColor : .secondary.opacity(0.4))
                                 .font(.body)
 
-                            UploadedFileRow(file: file, linkDisplayType: linkDisplayType) {
+                            UploadedFileRow(file: file, linkDisplayType: linkDisplayType, viewModel: viewModel) {
                                 fileToDelete = file
                             }
                         }
@@ -289,19 +289,28 @@ struct FileUploadView: View {
     @ViewBuilder
     private var uploadArea: some View {
         #if os(macOS)
-        DropZoneView(isLoading: viewModel.isLoading, progress: viewModel.uploadProgress) { urls in
-            Task {
-                for url in urls {
-                    guard let data = try? Data(contentsOf: url) else { continue }
-                    let _ = await viewModel.uploadFile(
-                        data: data,
-                        filename: url.lastPathComponent,
-                        context: modelContext
-                    )
+        VStack(spacing: 8) {
+            DropZoneView(isLoading: viewModel.isLoading, progress: viewModel.uploadProgress) { urls in
+                Task {
+                    for url in urls {
+                        guard let data = try? Data(contentsOf: url) else { continue }
+                        let _ = await viewModel.uploadFile(
+                            data: data,
+                            filename: url.lastPathComponent,
+                            context: modelContext
+                        )
+                    }
                 }
+            } onTap: {
+                showFilePicker = true
             }
-        } onTap: {
-            showFilePicker = true
+
+            Toggle(isOn: $viewModel.isPrivate) {
+                Label(String(localized: "Private"), systemImage: "lock")
+                    .font(.subheadline)
+            }
+            .toggleStyle(.checkbox)
+            .frame(maxWidth: 560)
         }
         #else
         VStack(spacing: 12) {
@@ -331,6 +340,12 @@ struct FileUploadView: View {
                         handlePasteUpload()
                     }
                 }
+
+                Toggle(isOn: $viewModel.isPrivate) {
+                    Label(String(localized: "Private"), systemImage: "lock")
+                        .font(.subheadline)
+                }
+                .toggleStyle(.switch)
             }
         }
         .frame(maxWidth: .infinity)
@@ -541,6 +556,7 @@ struct DropZoneView: View {
 struct UploadedFileRow: View {
     let file: UploadedFile
     let linkDisplayType: LinkDisplayType
+    var viewModel: FileUploadViewModel?
     let onDelete: () -> Void
 
     private var sizeInfo: String {
@@ -583,26 +599,46 @@ struct UploadedFileRow: View {
                     Text(file.filename)
                         .font(.subheadline.weight(.medium))
                         .lineLimit(1)
+                    if file.isPrivate {
+                        Image(systemName: "lock.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                    }
                     Spacer()
                     Text(file.createdAt.relativeFormatted)
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                 }
 
-                HStack(spacing: 4) {
-                    if isClickableURL, let url = URL(string: displayedLink) {
-                        Link(displayedLink, destination: url)
+                if file.isPrivate {
+                    Button {
+                        Task {
+                            if let url = await viewModel?.getPrivateDownloadURL(fileID: file.fileID) {
+                                ClipboardService.copy(url)
+                            }
+                        }
+                    } label: {
+                        Label(String(localized: "Get Download URL"), systemImage: "link.badge.plus")
                             .font(.caption)
-                            .lineLimit(1)
-                    } else {
-                        Text(displayedLink)
-                            .font(.caption.monospaced())
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .textSelection(.enabled)
                     }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                } else {
+                    HStack(spacing: 4) {
+                        if isClickableURL, let url = URL(string: displayedLink) {
+                            Link(displayedLink, destination: url)
+                                .font(.caption)
+                                .lineLimit(1)
+                        } else {
+                            Text(displayedLink)
+                                .font(.caption.monospaced())
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .textSelection(.enabled)
+                        }
 
-                    CopyButton(text: displayedLink)
+                        CopyButton(text: displayedLink)
+                    }
                 }
 
                 Text(sizeInfo)
@@ -612,69 +648,79 @@ struct UploadedFileRow: View {
         }
         .padding(.vertical, 4)
         .contextMenu {
-            Button(String(localized: "Direct Link")) {
-                ClipboardService.copy(file.url)
-            }
-
-            Button(String(localized: "Share Page")) {
-                ClipboardService.copy(file.page)
-            }
-
-            Divider()
-
-            Menu("BBCode") {
-                Button("BBCode") {
-                    ClipboardService.copy(
-                        LinkFormatter.bbcode(filename: file.filename, directURL: file.url)
-                    )
+            if file.isPrivate {
+                Button(String(localized: "Get Download URL")) {
+                    Task {
+                        if let url = await viewModel?.getPrivateDownloadURL(fileID: file.fileID) {
+                            ClipboardService.copy(url)
+                        }
+                    }
                 }
-                Button("BBCode w/ Link") {
-                    ClipboardService.copy(
-                        LinkFormatter.bbcodeWithLink(filename: file.filename, pageURL: file.page, directURL: file.url)
-                    )
+            } else {
+                Button(String(localized: "Direct Link")) {
+                    ClipboardService.copy(file.url)
                 }
-                Button("BBCode w/ Direct Link") {
-                    ClipboardService.copy(
-                        LinkFormatter.bbcodeDirectLink(filename: file.filename, directURL: file.url)
-                    )
-                }
-            }
 
-            Menu("HTML") {
-                Button("HTML") {
-                    ClipboardService.copy(
-                        LinkFormatter.html(filename: file.filename, directURL: file.url)
-                    )
+                Button(String(localized: "Share Page")) {
+                    ClipboardService.copy(file.page)
                 }
-                Button("HTML w/ Link") {
-                    ClipboardService.copy(
-                        LinkFormatter.htmlWithLink(filename: file.filename, pageURL: file.page, directURL: file.url)
-                    )
-                }
-                Button("HTML w/ Direct Link") {
-                    ClipboardService.copy(
-                        LinkFormatter.htmlDirectLink(filename: file.filename, directURL: file.url)
-                    )
-                }
-            }
 
-            Menu("Markdown") {
-                Button("Markdown") {
-                    ClipboardService.copy(
-                        LinkFormatter.markdown(filename: file.filename, directURL: file.url)
-                    )
+                Divider()
+
+                Menu("BBCode") {
+                    Button("BBCode") {
+                        ClipboardService.copy(
+                            LinkFormatter.bbcode(filename: file.filename, directURL: file.url)
+                        )
+                    }
+                    Button("BBCode w/ Link") {
+                        ClipboardService.copy(
+                            LinkFormatter.bbcodeWithLink(filename: file.filename, pageURL: file.page, directURL: file.url)
+                        )
+                    }
+                    Button("BBCode w/ Direct Link") {
+                        ClipboardService.copy(
+                            LinkFormatter.bbcodeDirectLink(filename: file.filename, directURL: file.url)
+                        )
+                    }
                 }
-            }
 
-            Divider()
+                Menu("HTML") {
+                    Button("HTML") {
+                        ClipboardService.copy(
+                            LinkFormatter.html(filename: file.filename, directURL: file.url)
+                        )
+                    }
+                    Button("HTML w/ Link") {
+                        ClipboardService.copy(
+                            LinkFormatter.htmlWithLink(filename: file.filename, pageURL: file.page, directURL: file.url)
+                        )
+                    }
+                    Button("HTML w/ Direct Link") {
+                        ClipboardService.copy(
+                            LinkFormatter.htmlDirectLink(filename: file.filename, directURL: file.url)
+                        )
+                    }
+                }
 
-            Button(String(localized: "Open in Browser")) {
-                if let url = URL(string: file.page) {
-                    #if os(macOS)
-                    NSWorkspace.shared.open(url)
-                    #else
-                    UIApplication.shared.open(url)
-                    #endif
+                Menu("Markdown") {
+                    Button("Markdown") {
+                        ClipboardService.copy(
+                            LinkFormatter.markdown(filename: file.filename, directURL: file.url)
+                        )
+                    }
+                }
+
+                Divider()
+
+                Button(String(localized: "Open in Browser")) {
+                    if let url = URL(string: file.page) {
+                        #if os(macOS)
+                        NSWorkspace.shared.open(url)
+                        #else
+                        UIApplication.shared.open(url)
+                        #endif
+                    }
                 }
             }
 

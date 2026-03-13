@@ -59,6 +59,7 @@ enum Endpoint: Sendable {
     case getFileDomains
     case uploadFile
     case deleteFile(hash: String)
+    case getPrivateFileDownloadURL(fileID: Int)
     case getTags
     case getUsage
 
@@ -72,6 +73,7 @@ enum Endpoint: Sendable {
         case .getFileDomains: "file/domains"
         case .uploadFile: "file/upload"
         case .deleteFile(let hash): "file/delete/\(hash)"
+        case .getPrivateFileDownloadURL: "file/private/download-url"
         case .getTags: "tags"
         case .getUsage: "usage"
         }
@@ -80,7 +82,7 @@ enum Endpoint: Sendable {
     var method: HTTPMethod {
         switch self {
         case .getDomains, .getLinkVisitStat, .getTextDomains, .getFileDomains,
-             .deleteFile, .getTags, .getUsage:
+             .deleteFile, .getTags, .getUsage, .getPrivateFileDownloadURL:
             .get
         case .createShortURL, .createText, .uploadFile:
             .post
@@ -110,6 +112,10 @@ enum Endpoint: Sendable {
                 URLQueryItem(name: "domain", value: domain),
                 URLQueryItem(name: "slug", value: slug),
                 URLQueryItem(name: "period", value: period),
+            ]
+        case .getPrivateFileDownloadURL(let fileID):
+            [
+                URLQueryItem(name: "file_id", value: String(fileID)),
             ]
         default:
             nil
@@ -248,6 +254,7 @@ actor APIClient {
         _ fileData: Data,
         filename: String,
         domain: String?,
+        isPrivate: Bool = false,
         progress: @Sendable @escaping (Double) -> Void
     ) async throws -> UploadFileResponse {
         let base = try resolveBaseURL()
@@ -275,6 +282,12 @@ actor APIClient {
             body.append(domain)
             body.append("\r\n")
         }
+
+        // Private field
+        body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"is_private\"\r\n\r\n")
+        body.append(isPrivate ? "1" : "0")
+        body.append("\r\n")
 
         body.append("--\(boundary)--\r\n")
 

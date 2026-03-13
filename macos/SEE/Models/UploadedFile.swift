@@ -15,6 +15,7 @@ final class UploadedFile {
     var path: String
     var deleteHash: String
     var deleteURL: String
+    var isPrivate: Bool = false
     var createdAt: Date
 
     init(
@@ -30,6 +31,7 @@ final class UploadedFile {
         path: String,
         deleteHash: String,
         deleteURL: String,
+        isPrivate: Bool = false,
         createdAt: Date = .now
     ) {
         self.fileID = fileID
@@ -44,6 +46,7 @@ final class UploadedFile {
         self.path = path
         self.deleteHash = deleteHash
         self.deleteURL = deleteURL
+        self.isPrivate = isPrivate
         self.createdAt = createdAt
     }
 

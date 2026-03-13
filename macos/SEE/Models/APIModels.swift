@@ -145,6 +145,12 @@ struct UploadFileResponse: Decodable, Sendable {
     }
 }
 
+// MARK: - Private File Download
+
+struct PrivateFileDownloadResponse: Decodable, Sendable {
+    let url: String
+}
+
 // MARK: - Tags
 
 struct TagsResponse: Decodable, Sendable {

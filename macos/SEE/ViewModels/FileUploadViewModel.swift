@@ -12,6 +12,7 @@ final class FileUploadViewModel {
     var successMessage: String?
     var domains: [String] = []
     var selectedDomain = ""
+    var isPrivate = false
 
     func loadDomains() async {
         do {
@@ -35,6 +36,7 @@ final class FileUploadViewModel {
                 data,
                 filename: filename,
                 domain: selectedDomain.isEmpty ? nil : selectedDomain,
+                isPrivate: isPrivate,
                 progress: { [weak self] progress in
                     Task { @MainActor in
                         self?.uploadProgress = progress
@@ -90,7 +92,8 @@ final class FileUploadViewModel {
                 page: response.page,
                 path: response.path,
                 deleteHash: response.hash,
-                deleteURL: response.delete
+                deleteURL: response.delete,
+                isPrivate: isPrivate
             )
             context.insert(file)
 
@@ -109,12 +112,26 @@ final class FileUploadViewModel {
                 }
             }
 
-            ClipboardService.copy(response.url)
-            successMessage = String(localized: "File uploaded and link copied!")
+            if isPrivate {
+                successMessage = String(localized: "Private file uploaded!")
+            } else {
+                ClipboardService.copy(response.url)
+                successMessage = String(localized: "File uploaded and link copied!")
+            }
             return true
         } catch {
             errorMessage = error.localizedDescription
             return false
+        }
+    }
+
+    func getPrivateDownloadURL(fileID: Int) async -> String? {
+        do {
+            let response: APIResponse<PrivateFileDownloadResponse> = try await APIClient.shared.request(.getPrivateFileDownloadURL(fileID: fileID))
+            return response.data?.url
+        } catch {
+            errorMessage = error.localizedDescription
+            return nil
         }
     }
 
