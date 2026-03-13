@@ -39,9 +39,22 @@
 		BF062F892F50C4F300122488 /* seeicon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = seeicon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BF94C0262F64A17900637183 /* Exceptions for "SEE" folder in "SEE" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8E8F88062F4EC789003D73F1 /* SEE */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8E8F88092F4EC789003D73F1 /* SEE */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BF94C0262F64A17900637183 /* Exceptions for "SEE" folder in "SEE" target */,
+			);
 			path = SEE;
 			sourceTree = "<group>";
 		};
