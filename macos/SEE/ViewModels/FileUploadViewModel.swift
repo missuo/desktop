@@ -113,10 +113,10 @@ final class FileUploadViewModel {
             }
 
             if isPrivate {
-                successMessage = String(localized: "Private file uploaded!")
+                successMessage = L10n.tr("Private file uploaded!")
             } else {
                 ClipboardService.copy(response.url)
-                successMessage = String(localized: "File uploaded and link copied!")
+                successMessage = L10n.tr("File uploaded and link copied!")
             }
             return true
         } catch {
@@ -142,7 +142,7 @@ final class FileUploadViewModel {
         do {
             try await APIClient.shared.requestNoBody(.deleteFile(hash: file.deleteHash))
             context.delete(file)
-            successMessage = String(localized: "File deleted")
+            successMessage = L10n.tr("File deleted")
             return true
         } catch {
             errorMessage = error.localizedDescription

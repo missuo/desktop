@@ -13,7 +13,7 @@ struct CreateShortLinkView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField(String(localized: "Target URL"), text: $viewModel.targetURL)
+                    TextField(L10n.tr("Target URL"), text: $viewModel.targetURL)
                         .textFieldStyle(.roundedBorder)
                         #if os(iOS)
                         .keyboardType(.URL)
@@ -21,42 +21,42 @@ struct CreateShortLinkView: View {
                         #endif
 
                     if !viewModel.targetURL.isEmpty && !viewModel.targetURL.isValidURL {
-                        Text(String(localized: "Please enter a valid URL"))
+                        Text(L10n.tr("Please enter a valid URL"))
                             .font(.caption)
                             .foregroundStyle(.red)
                     }
 
                     if !viewModel.domains.isEmpty {
                         DomainPicker(
-                            title: String(localized: "Domain"),
+                            title: L10n.tr("Domain"),
                             selection: $viewModel.selectedDomain,
                             domains: viewModel.domains
                         )
                     }
 
-                    TextField(String(localized: "Custom Slug (optional)"), text: $viewModel.customSlug)
+                    TextField(L10n.tr("Custom Slug (optional)"), text: $viewModel.customSlug)
                         .textFieldStyle(.roundedBorder)
                         .disabled(isEditing)
 
-                    TextField(String(localized: "Title (optional)"), text: $viewModel.title)
+                    TextField(L10n.tr("Title (optional)"), text: $viewModel.title)
                         .textFieldStyle(.roundedBorder)
                 } header: {
-                    Text(String(localized: "Link Details"))
+                    Text(L10n.tr("Link Details"))
                 }
 
                 if !isEditing {
                     Section {
-                        SecureField(String(localized: "Password (optional)"), text: $viewModel.password)
+                        SecureField(L10n.tr("Password (optional)"), text: $viewModel.password)
                             .textFieldStyle(.roundedBorder)
                     } header: {
-                        Text(String(localized: "Protection"))
+                        Text(L10n.tr("Protection"))
                     }
 
                     Section {
-                        Toggle(String(localized: "Set Expiration"), isOn: $viewModel.enableExpiry)
+                        Toggle(L10n.tr("Set Expiration"), isOn: $viewModel.enableExpiry)
                         if viewModel.enableExpiry {
                             DatePicker(
-                                String(localized: "Expire At"),
+                                L10n.tr("Expire At"),
                                 selection: Binding(
                                     get: { viewModel.expireAt ?? Date().addingTimeInterval(86400) },
                                     set: { viewModel.expireAt = $0 }
@@ -66,36 +66,36 @@ struct CreateShortLinkView: View {
                             )
 
                             TextField(
-                                String(localized: "Redirect URL after expiry (optional)"),
+                                L10n.tr("Redirect URL after expiry (optional)"),
                                 text: $viewModel.expirationRedirectURL
                             )
                             .textFieldStyle(.roundedBorder)
                         }
                     } header: {
-                        Text(String(localized: "Expiration"))
+                        Text(L10n.tr("Expiration"))
                     }
 
                     if !viewModel.tags.isEmpty {
                         Section {
                             TagSelector(tags: viewModel.tags, selectedTagIDs: $viewModel.selectedTagIDs)
                         } header: {
-                            Text(String(localized: "Tags"))
+                            Text(L10n.tr("Tags"))
                         }
                     }
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle(isEditing ? String(localized: "Edit Short Link") : String(localized: "New Short Link"))
+            .navigationTitle(isEditing ? L10n.tr("Edit Short Link") : L10n.tr("New Short Link"))
             #if os(macOS)
             .frame(minWidth: 450, minHeight: 400)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "Cancel")) { dismiss() }
+                    Button(L10n.tr("Cancel")) { dismiss() }
                         .keyboardShortcut(.cancelAction)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(isEditing ? String(localized: "Save") : String(localized: "Create")) {
+                    Button(isEditing ? L10n.tr("Save") : L10n.tr("Create")) {
                         Task {
                             let success: Bool
                             if let link = editingLink {

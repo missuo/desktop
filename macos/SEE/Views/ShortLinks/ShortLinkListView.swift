@@ -30,9 +30,9 @@ struct ShortLinkListView: View {
             if links.isEmpty {
                 EmptyStateView(
                     icon: "link",
-                    title: String(localized: "No Short Links"),
-                    message: String(localized: "Create your first short link to get started."),
-                    buttonTitle: String(localized: "Create Short Link"),
+                    title: L10n.tr("No Short Links"),
+                    message: L10n.tr("Create your first short link to get started."),
+                    buttonTitle: L10n.tr("Create Short Link"),
                     action: { showingCreate = true }
                 )
             } else {
@@ -53,15 +53,15 @@ struct ShortLinkListView: View {
                         .listRowSeparator(.hidden)
                     }
                 }
-                .searchable(text: $searchText, prompt: String(localized: "Search links"))
+                .searchable(text: $searchText, prompt: L10n.tr("Search links"))
                 .onChange(of: searchText) { currentPage = 1 }
             }
         }
-        .navigationTitle(String(localized: "Short Links"))
+        .navigationTitle(L10n.tr("Short Links"))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingCreate = true }) {
-                    Label(String(localized: "New Link"), systemImage: "plus")
+                    Label(L10n.tr("New Link"), systemImage: "plus")
                 }
                 .keyboardShortcut("n", modifiers: .command)
             }
@@ -78,12 +78,12 @@ struct ShortLinkListView: View {
                 .presentationDetents([.large])
                 #endif
         }
-        .alert(String(localized: "Delete Short Link?"), isPresented: .init(
+        .alert(L10n.tr("Delete Short Link?"), isPresented: .init(
             get: { linkToDelete != nil },
             set: { if !$0 { linkToDelete = nil } }
         )) {
-            Button(String(localized: "Cancel"), role: .cancel) {}
-            Button(String(localized: "Delete"), role: .destructive) {
+            Button(L10n.tr("Cancel"), role: .cancel) {}
+            Button(L10n.tr("Delete"), role: .destructive) {
                 if let link = linkToDelete {
                     Task {
                         let _ = await viewModel.deleteShortLink(link, context: modelContext)
@@ -91,7 +91,7 @@ struct ShortLinkListView: View {
                 }
             }
         } message: {
-            Text(String(localized: "This action cannot be undone."))
+            Text(L10n.tr("This action cannot be undone."))
         }
         .toast(message: $viewModel.successMessage)
         .toast(message: $viewModel.errorMessage, isError: true)
@@ -120,11 +120,11 @@ struct ShortLinkRow: View {
             onDelete: onDelete,
             extraMenuItems: {
                 AnyView(Group {
-                    Button(String(localized: "Copy Target URL")) {
+                    Button(L10n.tr("Copy Target URL")) {
                         ClipboardService.copy(link.targetURL)
                     }
                     Divider()
-                    Button(String(localized: "View Statistics")) {
+                    Button(L10n.tr("View Statistics")) {
                         showStats = true
                     }
                 })

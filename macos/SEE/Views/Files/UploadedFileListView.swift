@@ -16,6 +16,6 @@ struct UploadedFileListView: View {
                 }
             }
         }
-        .navigationTitle(String(localized: "Uploaded Files"))
+        .navigationTitle(L10n.tr("Uploaded Files"))
     }
 }

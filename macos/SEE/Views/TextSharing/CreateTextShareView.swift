@@ -13,10 +13,10 @@ struct CreateTextShareView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField(String(localized: "Untitled"), text: $viewModel.title)
+                    TextField(L10n.tr("Untitled"), text: $viewModel.title)
                         .textFieldStyle(.roundedBorder)
 
-                    Picker(String(localized: "Type"), selection: $viewModel.textType) {
+                    Picker(L10n.tr("Type"), selection: $viewModel.textType) {
                         ForEach(TextType.allCases) { type in
                             Text(type.displayName).tag(type)
                         }
@@ -25,17 +25,17 @@ struct CreateTextShareView: View {
 
                     if !viewModel.domains.isEmpty {
                         DomainPicker(
-                            title: String(localized: "Domain"),
+                            title: L10n.tr("Domain"),
                             selection: $viewModel.selectedDomain,
                             domains: viewModel.domains
                         )
                     }
 
-                    TextField(String(localized: "Custom Slug (optional)"), text: $viewModel.customSlug)
+                    TextField(L10n.tr("Custom Slug (optional)"), text: $viewModel.customSlug)
                         .textFieldStyle(.roundedBorder)
                         .disabled(isEditing)
                 } header: {
-                    Text(String(localized: "Details"))
+                    Text(L10n.tr("Details"))
                 }
 
                 Section {
@@ -43,18 +43,18 @@ struct CreateTextShareView: View {
                         .font(viewModel.textType == .sourceCode ? .system(.body, design: .monospaced) : .body)
                         .frame(minHeight: 200)
                 } header: {
-                    Text(String(localized: "Content"))
+                    Text(L10n.tr("Content"))
                 }
 
                 if !isEditing {
                     Section {
-                        SecureField(String(localized: "Password (optional)"), text: $viewModel.password)
+                        SecureField(L10n.tr("Password (optional)"), text: $viewModel.password)
                             .textFieldStyle(.roundedBorder)
 
-                        Toggle(String(localized: "Set Expiration"), isOn: $viewModel.enableExpiry)
+                        Toggle(L10n.tr("Set Expiration"), isOn: $viewModel.enableExpiry)
                         if viewModel.enableExpiry {
                             DatePicker(
-                                String(localized: "Expire At"),
+                                L10n.tr("Expire At"),
                                 selection: Binding(
                                     get: { viewModel.expireAt ?? Date().addingTimeInterval(86400) },
                                     set: { viewModel.expireAt = $0 }
@@ -64,7 +64,7 @@ struct CreateTextShareView: View {
                             )
                         }
                     } header: {
-                        Text(String(localized: "Options"))
+                        Text(L10n.tr("Options"))
                     }
 
                     if !viewModel.tags.isEmpty {
@@ -75,23 +75,23 @@ struct CreateTextShareView: View {
                                 maxSelection: 5
                             )
                         } header: {
-                            Text(String(localized: "Tags"))
+                            Text(L10n.tr("Tags"))
                         }
                     }
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle(isEditing ? String(localized: "Edit Text Share") : String(localized: "New Text Share"))
+            .navigationTitle(isEditing ? L10n.tr("Edit Text Share") : L10n.tr("New Text Share"))
             #if os(macOS)
             .frame(minWidth: 500, minHeight: 500)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "Cancel")) { dismiss() }
+                    Button(L10n.tr("Cancel")) { dismiss() }
                         .keyboardShortcut(.cancelAction)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(isEditing ? String(localized: "Save") : String(localized: "Create")) {
+                    Button(isEditing ? L10n.tr("Save") : L10n.tr("Create")) {
                         Task {
                             let success: Bool
                             if let share = editingShare {

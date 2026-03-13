@@ -227,9 +227,9 @@ enum TextType: String, CaseIterable, Sendable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .plainText: String(localized: "Plain Text")
-        case .sourceCode: String(localized: "Source Code")
-        case .markdown: String(localized: "Markdown")
+        case .plainText: L10n.tr("Plain Text")
+        case .sourceCode: L10n.tr("Source Code")
+        case .markdown: L10n.tr("Markdown")
         }
     }
 }
@@ -245,9 +245,9 @@ enum VisitStatPeriod: String, CaseIterable, Sendable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .daily: String(localized: "Today")
-        case .monthly: String(localized: "This Month")
-        case .totally: String(localized: "Total")
+        case .daily: L10n.tr("Today")
+        case .monthly: L10n.tr("This Month")
+        case .totally: L10n.tr("Total")
         }
     }
 }

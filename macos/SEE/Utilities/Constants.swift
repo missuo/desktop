@@ -8,6 +8,7 @@ enum Constants: Sendable {
     static let defaultFileDomainKey = "defaultFileDomain"
     static let defaultFileLinkDisplayKey = "defaultFileLinkDisplay"
     static let pasteImageFormatKey = "pasteImageFormat"
+    static let appLanguageKey = "appLanguage"
     static let keychainServiceName = "s.how.see"
     static let keychainAPIKeyAccount = "apiKey"
     static let websiteURL = URL(string: "https://s.ee")!

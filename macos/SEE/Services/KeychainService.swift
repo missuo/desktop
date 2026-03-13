@@ -74,7 +74,7 @@ enum KeychainError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .saveFailed(let status):
-            String(localized: "Failed to save to Keychain (status: \(status))")
+            L10n.format("Failed to save to Keychain (status: %ld)", Int(status))
         }
     }
 }

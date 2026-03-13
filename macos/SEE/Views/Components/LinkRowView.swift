@@ -82,10 +82,10 @@ struct LinkRowView: View {
         }
         .padding(.vertical, 4)
         .contextMenu {
-            Button(String(localized: "Copy Link")) { onCopy() }
+            Button(L10n.tr("Copy Link")) { onCopy() }
 
             if let onEdit {
-                Button(String(localized: "Edit...")) { onEdit() }
+                Button(L10n.tr("Edit...")) { onEdit() }
             }
 
             if let extraMenuItems {
@@ -94,7 +94,7 @@ struct LinkRowView: View {
 
             Divider()
 
-            Button(String(localized: "Delete"), role: .destructive) { onDelete() }
+            Button(L10n.tr("Delete"), role: .destructive) { onDelete() }
         }
     }
 }

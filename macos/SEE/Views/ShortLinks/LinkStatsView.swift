@@ -20,15 +20,15 @@ struct LinkStatsView: View {
 
                 HStack(spacing: 16) {
                     StatCard(
-                        title: String(localized: "Today"),
+                        title: L10n.tr("Today"),
                         value: viewModel.dailyVisits
                     )
                     StatCard(
-                        title: String(localized: "This Month"),
+                        title: L10n.tr("This Month"),
                         value: viewModel.monthlyVisits
                     )
                     StatCard(
-                        title: String(localized: "Total"),
+                        title: L10n.tr("Total"),
                         value: viewModel.totalVisits
                     )
                 }
@@ -37,13 +37,13 @@ struct LinkStatsView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle(String(localized: "Link Statistics"))
+            .navigationTitle(L10n.tr("Link Statistics"))
             #if os(macOS)
             .frame(minWidth: 400, minHeight: 250)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "Done")) { dismiss() }
+                    Button(L10n.tr("Done")) { dismiss() }
                         .keyboardShortcut(.cancelAction)
                 }
             }

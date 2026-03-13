@@ -29,9 +29,9 @@ struct TextShareListView: View {
             if shares.isEmpty {
                 EmptyStateView(
                     icon: "doc.text",
-                    title: String(localized: "No Text Shares"),
-                    message: String(localized: "Share text, code, or markdown with a link."),
-                    buttonTitle: String(localized: "Create Text Share"),
+                    title: L10n.tr("No Text Shares"),
+                    message: L10n.tr("Share text, code, or markdown with a link."),
+                    buttonTitle: L10n.tr("Create Text Share"),
                     action: { showingCreate = true }
                 )
             } else {
@@ -52,15 +52,15 @@ struct TextShareListView: View {
                         .listRowSeparator(.hidden)
                     }
                 }
-                .searchable(text: $searchText, prompt: String(localized: "Search text shares"))
+                .searchable(text: $searchText, prompt: L10n.tr("Search text shares"))
                 .onChange(of: searchText) { currentPage = 1 }
             }
         }
-        .navigationTitle(String(localized: "Text Sharing"))
+        .navigationTitle(L10n.tr("Text Sharing"))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingCreate = true }) {
-                    Label(String(localized: "New Text"), systemImage: "plus")
+                    Label(L10n.tr("New Text"), systemImage: "plus")
                 }
             }
         }
@@ -76,12 +76,12 @@ struct TextShareListView: View {
                 .presentationDetents([.large])
                 #endif
         }
-        .alert(String(localized: "Delete Text Share?"), isPresented: .init(
+        .alert(L10n.tr("Delete Text Share?"), isPresented: .init(
             get: { shareToDelete != nil },
             set: { if !$0 { shareToDelete = nil } }
         )) {
-            Button(String(localized: "Cancel"), role: .cancel) {}
-            Button(String(localized: "Delete"), role: .destructive) {
+            Button(L10n.tr("Cancel"), role: .cancel) {}
+            Button(L10n.tr("Delete"), role: .destructive) {
                 if let share = shareToDelete {
                     Task {
                         let _ = await viewModel.deleteTextShare(share, context: modelContext)
@@ -89,7 +89,7 @@ struct TextShareListView: View {
                 }
             }
         } message: {
-            Text(String(localized: "This action cannot be undone."))
+            Text(L10n.tr("This action cannot be undone."))
         }
         .toast(message: $viewModel.successMessage)
         .toast(message: $viewModel.errorMessage, isError: true)
@@ -108,9 +108,9 @@ struct TextShareRow: View {
 
     private var badgeText: String {
         switch share.textType {
-        case TextType.sourceCode.rawValue: "Code"
-        case TextType.markdown.rawValue: "Markdown"
-        default: "Text"
+        case TextType.sourceCode.rawValue: L10n.tr("Code")
+        case TextType.markdown.rawValue: L10n.tr("Markdown")
+        default: L10n.tr("Text")
         }
     }
 

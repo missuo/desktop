@@ -19,6 +19,20 @@ enum LinkDisplayType: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    var displayName: String {
+        switch self {
+        case .directLink: L10n.tr("Direct Link")
+        case .sharePage: L10n.tr("Share Page")
+        case .bbcode: L10n.tr("BBCode")
+        case .bbcodeWithLink: L10n.tr("BBCode w/ Link")
+        case .bbcodeDirectLink: L10n.tr("BBCode w/ Direct Link")
+        case .html: L10n.tr("HTML")
+        case .htmlWithLink: L10n.tr("HTML w/ Link")
+        case .htmlDirectLink: L10n.tr("HTML w/ Direct Link")
+        case .markdown: L10n.tr("Markdown")
+        }
+    }
+
     func formatted(file: UploadedFile) -> String {
         switch self {
         case .directLink:
@@ -83,8 +97,8 @@ struct FileUploadView: View {
             if files.isEmpty {
                 EmptyStateView(
                     icon: "arrow.up.doc",
-                    title: String(localized: "No Uploaded Files"),
-                    message: String(localized: "Upload files to share them with a link.")
+                    title: L10n.tr("No Uploaded Files"),
+                    message: L10n.tr("Upload files to share them with a link.")
                 )
             } else {
                 List {
@@ -138,7 +152,7 @@ struct FileUploadView: View {
             return true
         }
         #endif
-        .navigationTitle(String(localized: "File Upload"))
+        .navigationTitle(L10n.tr("File Upload"))
         .toolbar {
             #if os(iOS)
             ToolbarItem(placement: .topBarTrailing) {
@@ -147,14 +161,14 @@ struct FileUploadView: View {
                         ForEach(LinkDisplayType.allCases) { type in
                             Button(action: { linkDisplayType = type }) {
                                 if linkDisplayType == type {
-                                    Label(type.rawValue, systemImage: "checkmark")
+                                    Label(type.displayName, systemImage: "checkmark")
                                 } else {
-                                    Text(type.rawValue)
+                                    Text(type.displayName)
                                 }
                             }
                         }
                     } label: {
-                        Text(linkDisplayType.rawValue)
+                        Text(linkDisplayType.displayName)
                             .font(.subheadline)
                             .lineLimit(1)
                     }
@@ -177,15 +191,15 @@ struct FileUploadView: View {
                     ForEach(LinkDisplayType.allCases) { type in
                         Button(action: { linkDisplayType = type }) {
                             if linkDisplayType == type {
-                                Label(type.rawValue, systemImage: "checkmark")
+                                    Label(type.displayName, systemImage: "checkmark")
                             } else {
-                                Text(type.rawValue)
+                                Text(type.displayName)
                             }
                         }
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text(linkDisplayType.rawValue)
+                        Text(linkDisplayType.displayName)
                         Image(systemName: "chevron.up.chevron.down")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
@@ -199,8 +213,8 @@ struct FileUploadView: View {
                 Button(action: { showBatchLinks = true }) {
                     Label(
                         selectedFileIDs.isEmpty
-                            ? String(localized: "Get Links")
-                            : String(localized: "Get Links (\(selectedFileIDs.count))"),
+                            ? L10n.tr("Get Links")
+                            : L10n.format("Get Links (%ld)", selectedFileIDs.count),
                         systemImage: "link.badge.plus"
                     )
                 }
@@ -208,26 +222,26 @@ struct FileUploadView: View {
             }
             ToolbarItem(placement: .automatic) {
                 Button(action: { showBatchDeleteAlert = true }) {
-                    Label(String(localized: "Delete (\(selectedFileIDs.count))"), systemImage: "trash")
+                    Label(L10n.format("Delete (%ld)", selectedFileIDs.count), systemImage: "trash")
                 }
                 .tint(.red)
                 .disabled(selectedFileIDs.isEmpty)
             }
             ToolbarItem(placement: .automatic) {
                 Button(action: handlePasteUpload) {
-                    Label(String(localized: "Paste"), systemImage: "doc.on.clipboard")
+                    Label(L10n.tr("Paste"), systemImage: "doc.on.clipboard")
                 }
                 .keyboardShortcut("v", modifiers: .command)
                 .disabled(viewModel.isLoading)
             }
             #endif
         }
-        .alert(String(localized: "Delete File?"), isPresented: .init(
+        .alert(L10n.tr("Delete File?"), isPresented: .init(
             get: { fileToDelete != nil },
             set: { if !$0 { fileToDelete = nil } }
         )) {
-            Button(String(localized: "Cancel"), role: .cancel) {}
-            Button(String(localized: "Delete"), role: .destructive) {
+            Button(L10n.tr("Cancel"), role: .cancel) {}
+            Button(L10n.tr("Delete"), role: .destructive) {
                 if let file = fileToDelete {
                     Task {
                         let _ = await viewModel.deleteFile(file, context: modelContext)
@@ -235,17 +249,17 @@ struct FileUploadView: View {
                 }
             }
         } message: {
-            Text(String(localized: "This will permanently delete the file."))
+            Text(L10n.tr("This will permanently delete the file."))
         }
-        .alert(String(localized: "Delete \(selectedFileIDs.count) Files?"), isPresented: $showBatchDeleteAlert) {
-            Button(String(localized: "Cancel"), role: .cancel) {}
-            Button(String(localized: "Delete All"), role: .destructive) {
+        .alert(L10n.format("Delete %ld Files?", selectedFileIDs.count), isPresented: $showBatchDeleteAlert) {
+            Button(L10n.tr("Cancel"), role: .cancel) {}
+            Button(L10n.tr("Delete All"), role: .destructive) {
                 Task {
                     await batchDeleteSelectedFiles()
                 }
             }
         } message: {
-            Text(String(localized: "This will permanently delete \(selectedFileIDs.count) selected files. This action cannot be undone."))
+            Text(L10n.format("This will permanently delete %ld selected files. This action cannot be undone.", selectedFileIDs.count))
         }
         .sheet(isPresented: $showBatchLinks) {
             BatchLinksView(files: selectedFiles, linkDisplayType: linkDisplayType) {
@@ -306,7 +320,7 @@ struct FileUploadView: View {
             }
 
             Toggle(isOn: $viewModel.isPrivate) {
-                Label(String(localized: "Private"), systemImage: "lock")
+                Label(L10n.tr("Private"), systemImage: "lock")
                     .font(.subheadline)
             }
             .toggleStyle(.checkbox)
@@ -318,31 +332,31 @@ struct FileUploadView: View {
                 VStack(spacing: 8) {
                     ProgressView(value: viewModel.uploadProgress)
                         .tint(.accentColor)
-                    Text(String(localized: "Uploading... \(Int(viewModel.uploadProgress * 100))%"))
+                    Text(L10n.format("Uploading... %ld%%", Int(viewModel.uploadProgress * 100)))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
                 .padding()
             } else {
                 HStack(spacing: 24) {
-                    UploadActionButton(title: String(localized: "File"), icon: "doc", tint: .accentColor) {
+                    UploadActionButton(title: L10n.tr("File"), icon: "doc", tint: .accentColor) {
                         showFilePicker = true
                     }
-                    UploadActionButton(title: String(localized: "Photo"), icon: "photo", tint: .orange) {
+                    UploadActionButton(title: L10n.tr("Photo"), icon: "photo", tint: .orange) {
                         showPhotoPicker = true
                     }
                     if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                        UploadActionButton(title: String(localized: "Camera"), icon: "camera", tint: .green) {
+                        UploadActionButton(title: L10n.tr("Camera"), icon: "camera", tint: .green) {
                             showCamera = true
                         }
                     }
-                    UploadActionButton(title: String(localized: "Paste"), icon: "doc.on.clipboard", tint: .purple) {
+                    UploadActionButton(title: L10n.tr("Paste"), icon: "doc.on.clipboard", tint: .purple) {
                         handlePasteUpload()
                     }
                 }
 
                 Toggle(isOn: $viewModel.isPrivate) {
-                    Label(String(localized: "Private"), systemImage: "lock")
+                    Label(L10n.tr("Private"), systemImage: "lock")
                         .font(.subheadline)
                 }
                 .toggleStyle(.switch)
@@ -378,13 +392,13 @@ struct FileUploadView: View {
         }
         selectedFileIDs.removeAll()
         if failCount > 0 {
-            viewModel.errorMessage = String(localized: "\(failCount) file(s) failed to delete")
+            viewModel.errorMessage = L10n.format("%ld file(s) failed to delete", failCount)
         }
     }
 
     private func handlePasteUpload() {
         guard let imageData = ImageConverter.clipboardImageData() else {
-            viewModel.errorMessage = String(localized: "No image found in clipboard")
+            viewModel.errorMessage = L10n.tr("No image found in clipboard")
             return
         }
         Task {
@@ -448,7 +462,7 @@ struct FileUploadView: View {
             // Convert MOV to MP4 for better compatibility
             if let mp4URL = await convertToMP4(source: url) {
                 guard let data = try? Data(contentsOf: mp4URL) else {
-                    viewModel.errorMessage = String(localized: "Failed to read video file")
+                    viewModel.errorMessage = L10n.tr("Failed to read video file")
                     return
                 }
                 let filename = "video-\(timestamp).mp4"
@@ -457,7 +471,7 @@ struct FileUploadView: View {
             } else {
                 // Fallback: upload original file if conversion fails
                 guard let data = try? Data(contentsOf: url) else {
-                    viewModel.errorMessage = String(localized: "Failed to read video file")
+                    viewModel.errorMessage = L10n.tr("Failed to read video file")
                     return
                 }
                 let ext = url.pathExtension.isEmpty ? "mov" : url.pathExtension
@@ -520,13 +534,13 @@ struct DropZoneView: View {
         VStack(spacing: 12) {
             if isLoading {
                 ProgressView(value: progress) {
-                    Text(String(localized: "Uploading... \(Int(progress * 100))%"))
+                    Text(L10n.format("Uploading... %ld%%", Int(progress * 100)))
                 }
             } else {
                 Image(systemName: "arrow.up.doc")
                     .font(.system(size: 32))
                     .foregroundStyle(.secondary)
-                Text(String(localized: "Drop files here, click to browse, or ⌘V to paste"))
+                Text(L10n.tr("Drop files here, click to browse, or ⌘V to paste"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -618,7 +632,7 @@ struct UploadedFileRow: View {
                             }
                         }
                     } label: {
-                        Label(String(localized: "Get Download URL"), systemImage: "link.badge.plus")
+                        Label(L10n.tr("Get Download URL"), systemImage: "link.badge.plus")
                             .font(.caption)
                     }
                     .buttonStyle(.borderedProminent)
@@ -649,7 +663,7 @@ struct UploadedFileRow: View {
         .padding(.vertical, 4)
         .contextMenu {
             if file.isPrivate {
-                Button(String(localized: "Get Download URL")) {
+                Button(L10n.tr("Get Download URL")) {
                     Task {
                         if let url = await viewModel?.getPrivateDownloadURL(fileID: file.fileID) {
                             ClipboardService.copy(url)
@@ -657,54 +671,54 @@ struct UploadedFileRow: View {
                     }
                 }
             } else {
-                Button(String(localized: "Direct Link")) {
+                Button(L10n.tr("Direct Link")) {
                     ClipboardService.copy(file.url)
                 }
 
-                Button(String(localized: "Share Page")) {
+                Button(L10n.tr("Share Page")) {
                     ClipboardService.copy(file.page)
                 }
 
                 Divider()
 
-                Menu("BBCode") {
-                    Button("BBCode") {
+                Menu(L10n.tr("BBCode")) {
+                    Button(L10n.tr("BBCode")) {
                         ClipboardService.copy(
                             LinkFormatter.bbcode(filename: file.filename, directURL: file.url)
                         )
                     }
-                    Button("BBCode w/ Link") {
+                    Button(L10n.tr("BBCode w/ Link")) {
                         ClipboardService.copy(
                             LinkFormatter.bbcodeWithLink(filename: file.filename, pageURL: file.page, directURL: file.url)
                         )
                     }
-                    Button("BBCode w/ Direct Link") {
+                    Button(L10n.tr("BBCode w/ Direct Link")) {
                         ClipboardService.copy(
                             LinkFormatter.bbcodeDirectLink(filename: file.filename, directURL: file.url)
                         )
                     }
                 }
 
-                Menu("HTML") {
-                    Button("HTML") {
+                Menu(L10n.tr("HTML")) {
+                    Button(L10n.tr("HTML")) {
                         ClipboardService.copy(
                             LinkFormatter.html(filename: file.filename, directURL: file.url)
                         )
                     }
-                    Button("HTML w/ Link") {
+                    Button(L10n.tr("HTML w/ Link")) {
                         ClipboardService.copy(
                             LinkFormatter.htmlWithLink(filename: file.filename, pageURL: file.page, directURL: file.url)
                         )
                     }
-                    Button("HTML w/ Direct Link") {
+                    Button(L10n.tr("HTML w/ Direct Link")) {
                         ClipboardService.copy(
                             LinkFormatter.htmlDirectLink(filename: file.filename, directURL: file.url)
                         )
                     }
                 }
 
-                Menu("Markdown") {
-                    Button("Markdown") {
+                Menu(L10n.tr("Markdown")) {
+                    Button(L10n.tr("Markdown")) {
                         ClipboardService.copy(
                             LinkFormatter.markdown(filename: file.filename, directURL: file.url)
                         )
@@ -713,7 +727,7 @@ struct UploadedFileRow: View {
 
                 Divider()
 
-                Button(String(localized: "Open in Browser")) {
+                Button(L10n.tr("Open in Browser")) {
                     if let url = URL(string: file.page) {
                         #if os(macOS)
                         NSWorkspace.shared.open(url)
@@ -726,7 +740,7 @@ struct UploadedFileRow: View {
 
             Divider()
 
-            Button(String(localized: "Delete"), role: .destructive) { onDelete() }
+            Button(L10n.tr("Delete"), role: .destructive) { onDelete() }
         }
     }
 }
@@ -757,11 +771,11 @@ struct BatchLinksView: View {
             VStack(spacing: 0) {
                 // Format picker
                 HStack {
-                    Text(String(localized: "Format"))
+                    Text(L10n.tr("Format"))
                         .font(.subheadline.weight(.medium))
                     Picker("", selection: $batchType) {
                         ForEach(LinkDisplayType.allCases) { type in
-                            Text(type.rawValue).tag(type)
+                            Text(type.displayName).tag(type)
                         }
                     }
                     .labelsHidden()
@@ -783,7 +797,7 @@ struct BatchLinksView: View {
 
                 // Actions
                 HStack {
-                    Button(String(localized: "Clear Selection"), role: .destructive) {
+                    Button(L10n.tr("Clear Selection"), role: .destructive) {
                         onDismiss()
                     }
 
@@ -799,20 +813,20 @@ struct BatchLinksView: View {
                         HStack(spacing: 4) {
                             Image(systemName: copied ? "checkmark" : "doc.on.doc")
                                 .contentTransition(.symbolEffect(.replace))
-                            Text(copied ? String(localized: "Copied!") : String(localized: "Copy All"))
+                            Text(copied ? L10n.tr("Copied!") : L10n.tr("Copy All"))
                         }
                     }
                     .buttonStyle(.borderedProminent)
                 }
                 .padding()
             }
-            .navigationTitle(String(localized: "Batch Copy Links"))
+            .navigationTitle(L10n.tr("Batch Copy Links"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "Done")) { dismiss() }
+                    Button(L10n.tr("Done")) { dismiss() }
                 }
             }
             #if os(macOS)

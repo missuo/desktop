@@ -6,9 +6,9 @@ struct TextShareDetailView: View {
     var body: some View {
         List {
             Section {
-                LabeledContent(String(localized: "Title"), value: share.title)
+                LabeledContent(L10n.tr("Title"), value: share.title)
 
-                LabeledContent(String(localized: "Link")) {
+                LabeledContent(L10n.tr("Link")) {
                     HStack {
                         Text(share.shortURL)
                             .foregroundStyle(Color.accentColor)
@@ -19,12 +19,12 @@ struct TextShareDetailView: View {
                     }
                 }
 
-                LabeledContent(String(localized: "Type")) {
+                LabeledContent(L10n.tr("Type")) {
                     Text(TextType(rawValue: share.textType)?.displayName ?? share.textType)
                 }
 
-                LabeledContent(String(localized: "Domain"), value: share.domain)
-                LabeledContent(String(localized: "Created"), value: share.createdAt.shortFormatted)
+                LabeledContent(L10n.tr("Domain"), value: share.domain)
+                LabeledContent(L10n.tr("Created"), value: share.createdAt.shortFormatted)
             }
 
             Section {
@@ -33,7 +33,7 @@ struct TextShareDetailView: View {
                           ? .system(.body, design: .monospaced) : .body)
                     .textSelection(.enabled)
             } header: {
-                Text(String(localized: "Content"))
+                Text(L10n.tr("Content"))
             }
         }
         .navigationTitle(share.title)

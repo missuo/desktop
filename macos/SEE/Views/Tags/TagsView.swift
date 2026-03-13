@@ -8,9 +8,9 @@ struct TagsView: View {
             if viewModel.tags.isEmpty && !viewModel.isLoading {
                 EmptyStateView(
                     icon: "tag",
-                    title: String(localized: "No Tags"),
-                    message: String(localized: "Tags will appear here once created on the server."),
-                    buttonTitle: String(localized: "Refresh"),
+                    title: L10n.tr("No Tags"),
+                    message: L10n.tr("Tags will appear here once created on the server."),
+                    buttonTitle: L10n.tr("Refresh"),
                     action: { Task { await viewModel.loadTags() } }
                 )
             } else {
@@ -21,13 +21,13 @@ struct TagsView: View {
                 }
             }
         }
-        .navigationTitle(String(localized: "Tags"))
+        .navigationTitle(L10n.tr("Tags"))
         .loadingOverlay(viewModel.isLoading)
         .toolbar {
             #if os(macOS)
             ToolbarItem(placement: .automatic) {
                 Button(action: { Task { await viewModel.loadTags() } }) {
-                    Label(String(localized: "Refresh"), systemImage: "arrow.clockwise")
+                    Label(L10n.tr("Refresh"), systemImage: "arrow.clockwise")
                 }
             }
             #endif

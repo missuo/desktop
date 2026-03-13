@@ -13,7 +13,7 @@ struct PaginationView: View {
                 }
                 .disabled(currentPage <= 1)
 
-                Text(String(localized: "\(currentPage) / \(totalPages)"))
+                Text(L10n.format("%ld / %ld", currentPage, totalPages))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .monospacedDigit()

@@ -33,6 +33,7 @@ struct SettingsView: View {
     @State private var isClearingCache = false
     @State private var showClearHistoryAlert = false
     @State private var cacheCleared = false
+    @State private var appLanguage = AppLocalization.selectedLanguage()
 
     enum ValidationResult {
         case success
@@ -48,7 +49,7 @@ struct SettingsView: View {
             Section {
                 #if os(macOS)
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(String(localized: "Base URL"))
+                    Text(L10n.tr("Base URL"))
                         .font(.subheadline.weight(.medium))
                     TextField("", text: $baseURL, prompt: Text("https://s.ee/api/v1/"))
                         .textFieldStyle(.roundedBorder)
@@ -63,7 +64,7 @@ struct SettingsView: View {
                 .padding(.vertical, 4)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(String(localized: "API Key"))
+                    Text(L10n.tr("API Key"))
                         .font(.subheadline.weight(.medium))
                     HStack(spacing: 6) {
                         Group {
@@ -88,7 +89,7 @@ struct SettingsView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     HStack(spacing: 8) {
-                        Button(String(localized: "Paste from Clipboard")) {
+                        Button(L10n.tr("Paste from Clipboard")) {
                             if let clipboard = ClipboardService.getString() {
                                 apiKey = clipboard
                             }
@@ -99,7 +100,7 @@ struct SettingsView: View {
                                 ProgressView()
                                     .controlSize(.small)
                             } else {
-                                Text(String(localized: "Verify API Key"))
+                                Text(L10n.tr("Verify API Key"))
                             }
                         }
                         .buttonStyle(.borderedProminent)
@@ -111,16 +112,16 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 4)
                 #else
-                TextField(String(localized: "Base URL"), text: $baseURL)
+                TextField(L10n.tr("Base URL"), text: $baseURL)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
                     .onChange(of: baseURL) {
                         UserDefaults.standard.set(baseURL, forKey: Constants.baseURLKey)
                     }
 
-                SecureField(String(localized: "API Key"), text: $apiKey)
+                SecureField(L10n.tr("API Key"), text: $apiKey)
 
-                Button(String(localized: "Paste from Clipboard")) {
+                Button(L10n.tr("Paste from Clipboard")) {
                     if let clipboard = ClipboardService.getString() {
                         apiKey = clipboard
                     }
@@ -128,7 +129,7 @@ struct SettingsView: View {
 
                 Button(action: validateKey) {
                     HStack {
-                        Text(String(localized: "Verify API Key"))
+                        Text(L10n.tr("Verify API Key"))
                         Spacer()
                         if isValidating {
                             ProgressView()
@@ -143,7 +144,7 @@ struct SettingsView: View {
                     switch validationResult {
                     case .success:
                         Label(
-                            String(localized: "API key verified successfully!"),
+                            L10n.tr("API key verified successfully!"),
                             systemImage: "checkmark.circle.fill"
                         )
                         .foregroundStyle(.green)
@@ -155,7 +156,7 @@ struct SettingsView: View {
 
                 Link(destination: URL(string: "https://s.ee/user/developers/")!) {
                     HStack {
-                        Label(String(localized: "Get your API Token"), systemImage: "key.fill")
+                        Label(L10n.tr("Get your API Token"), systemImage: "key.fill")
                         Spacer()
                         Image(systemName: "arrow.up.right")
                             .font(.caption)
@@ -163,7 +164,7 @@ struct SettingsView: View {
                     }
                 }
             } header: {
-                Text(String(localized: "API Configuration"))
+                Text(L10n.tr("API Configuration"))
             }
 
             Section {
@@ -171,16 +172,16 @@ struct SettingsView: View {
                     HStack {
                         ProgressView()
                             .controlSize(.small)
-                        Text(String(localized: "Loading domains..."))
+                        Text(L10n.tr("Loading domains..."))
                             .foregroundStyle(.secondary)
                     }
                 } else if shortLinkDomains.isEmpty && textDomains.isEmpty && fileDomains.isEmpty {
-                    Text(String(localized: "No domains available. Verify your API key first."))
+                    Text(L10n.tr("No domains available. Verify your API key first."))
                         .foregroundStyle(.secondary)
                 } else {
                     if !shortLinkDomains.isEmpty {
                         DomainPicker(
-                            title: String(localized: "Short Links"),
+                            title: L10n.tr("Short Links"),
                             selection: $defaultShortLinkDomain,
                             domains: shortLinkDomains
                         )
@@ -191,7 +192,7 @@ struct SettingsView: View {
 
                     if !textDomains.isEmpty {
                         DomainPicker(
-                            title: String(localized: "Text Sharing"),
+                            title: L10n.tr("Text Sharing"),
                             selection: $defaultTextDomain,
                             domains: textDomains
                         )
@@ -202,7 +203,7 @@ struct SettingsView: View {
 
                     if !fileDomains.isEmpty {
                         DomainPicker(
-                            title: String(localized: "File Upload"),
+                            title: L10n.tr("File Upload"),
                             selection: $defaultFileDomain,
                             domains: fileDomains
                         )
@@ -212,20 +213,20 @@ struct SettingsView: View {
                     }
                 }
             } header: {
-                Text(String(localized: "Default Domains"))
+                Text(L10n.tr("Default Domains"))
             }
 
             Section {
-                Picker(String(localized: "File Upload Link Format"), selection: $defaultFileLinkDisplay) {
+                Picker(L10n.tr("File Upload Link Format"), selection: $defaultFileLinkDisplay) {
                     ForEach(LinkDisplayType.allCases) { type in
-                        Text(type.rawValue).tag(type)
+                        Text(type.displayName).tag(type)
                     }
                 }
                 .onChange(of: defaultFileLinkDisplay) {
                     UserDefaults.standard.set(defaultFileLinkDisplay.rawValue, forKey: Constants.defaultFileLinkDisplayKey)
                 }
 
-                Picker(String(localized: "Paste Image Format"), selection: $pasteImageFormat) {
+                Picker(L10n.tr("Paste Image Format"), selection: $pasteImageFormat) {
                     ForEach(PasteImageFormat.allCases) { fmt in
                         Text(fmt.rawValue).tag(fmt)
                     }
@@ -234,23 +235,40 @@ struct SettingsView: View {
                     UserDefaults.standard.set(pasteImageFormat.rawValue, forKey: Constants.pasteImageFormatKey)
                 }
             } header: {
-                Text(String(localized: "File Upload"))
+                Text(L10n.tr("File Upload"))
             }
 
             Section {
-                LabeledContent(String(localized: "Version")) {
+                Picker(L10n.tr("App Language"), selection: $appLanguage) {
+                    ForEach(AppLanguage.allCases) { language in
+                        Text(language.displayName).tag(language)
+                    }
+                }
+                .onChange(of: appLanguage) {
+                    AppLocalization.setSelectedLanguage(appLanguage)
+                }
+            } header: {
+                Text(L10n.tr("Language"))
+            } footer: {
+                Text(L10n.tr("Language changes apply immediately."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
+                LabeledContent(L10n.tr("Version")) {
                     Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")
                 }
 
                 Link(destination: Constants.websiteURL) {
-                    LabeledContent(String(localized: "Website")) {
+                    LabeledContent(L10n.tr("Website")) {
                         Text("s.ee")
                             .foregroundStyle(Color.accentColor)
                     }
                 }
 
                 Link(destination: URL(string: "https://s.ee/privacy/")!) {
-                    LabeledContent(String(localized: "Privacy Policy")) {
+                    LabeledContent(L10n.tr("Privacy Policy")) {
                         Image(systemName: "arrow.up.right")
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -258,7 +276,7 @@ struct SettingsView: View {
                 }
 
                 Link(destination: URL(string: "https://s.ee/terms/")!) {
-                    LabeledContent(String(localized: "Terms of Service")) {
+                    LabeledContent(L10n.tr("Terms of Service")) {
                         Image(systemName: "arrow.up.right")
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -266,25 +284,25 @@ struct SettingsView: View {
                 }
 
                 Link(destination: URL(string: "https://s.ee/aup/")!) {
-                    LabeledContent(String(localized: "Acceptable Use Policy")) {
+                    LabeledContent(L10n.tr("Acceptable Use Policy")) {
                         Image(systemName: "arrow.up.right")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
             } header: {
-                Text(String(localized: "About"))
+                Text(L10n.tr("About"))
             }
 
             #if os(macOS)
             Section {
             } header: {
-                Text(String(localized: "Cache"))
+                Text(L10n.tr("Cache"))
             } footer: {
                 VStack(alignment: .leading, spacing: 0) {
                     Button(action: clearThumbnailCache) {
                         HStack(spacing: 8) {
-                            Text(String(localized: "Clear Thumbnail Cache"))
+                            Text(L10n.tr("Clear Thumbnail Cache"))
                             if isClearingCache {
                                 ProgressView()
                                     .controlSize(.small)
@@ -303,14 +321,14 @@ struct SettingsView: View {
 
             Section {
             } header: {
-                Text(String(localized: "Data"))
+                Text(L10n.tr("Data"))
             } footer: {
                 VStack(alignment: .leading, spacing: 8) {
                     Button(action: { showClearHistoryAlert = true }) {
-                        Text(String(localized: "Clear Local History"))
+                        Text(L10n.tr("Clear Local History"))
                     }
 
-                    Text(String(localized: "Local history only stores records on this device."))
+                    Text(L10n.tr("Local history only stores records on this device."))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -321,10 +339,10 @@ struct SettingsView: View {
 
             Section {
             } header: {
-                Text(String(localized: "Account"))
+                Text(L10n.tr("Account"))
             } footer: {
                 VStack(alignment: .leading, spacing: 0) {
-                    Button(String(localized: "Sign Out")) {
+                    Button(L10n.tr("Sign Out")) {
                         KeychainService.setAPIKey(nil)
                         hasAPIKey = false
                     }
@@ -337,7 +355,7 @@ struct SettingsView: View {
             Section {
                 Button(action: clearThumbnailCache) {
                     HStack {
-                        Text(String(localized: "Clear Thumbnail Cache"))
+                        Text(L10n.tr("Clear Thumbnail Cache"))
                         Spacer()
                         if isClearingCache {
                             ProgressView()
@@ -350,23 +368,23 @@ struct SettingsView: View {
                 }
                 .disabled(isClearingCache)
             } header: {
-                Text(String(localized: "Cache"))
+                Text(L10n.tr("Cache"))
             }
 
             Section {
                 Button(role: .destructive, action: { showClearHistoryAlert = true }) {
-                    Text(String(localized: "Clear Local History"))
+                    Text(L10n.tr("Clear Local History"))
                 }
             } header: {
-                Text(String(localized: "Data"))
+                Text(L10n.tr("Data"))
             } footer: {
-                Text(String(localized: "Local history only stores records on this device."))
+                Text(L10n.tr("Local history only stores records on this device."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
             Section {
-                Button(String(localized: "Sign Out"), role: .destructive) {
+                Button(L10n.tr("Sign Out"), role: .destructive) {
                     KeychainService.setAPIKey(nil)
                     hasAPIKey = false
                 }
@@ -374,14 +392,14 @@ struct SettingsView: View {
             #endif
         }
         .formStyle(.grouped)
-        .navigationTitle(String(localized: "Settings"))
-        .alert(String(localized: "Clear Local History?"), isPresented: $showClearHistoryAlert) {
-            Button(String(localized: "Cancel"), role: .cancel) {}
-            Button(String(localized: "Clear"), role: .destructive) {
+        .navigationTitle(L10n.tr("Settings"))
+        .alert(L10n.tr("Clear Local History?"), isPresented: $showClearHistoryAlert) {
+            Button(L10n.tr("Cancel"), role: .cancel) {}
+            Button(L10n.tr("Clear"), role: .destructive) {
                 clearLocalHistory()
             }
         } message: {
-            Text(String(localized: "This will only remove records stored on this device. Your files, links, and text shares on the server will not be affected. To delete data from the server, please visit s.ee."))
+            Text(L10n.tr("This will only remove records stored on this device. Your files, links, and text shares on the server will not be affected. To delete data from the server, please visit s.ee."))
         }
         .task {
             await loadAllDomains()

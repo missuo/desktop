@@ -50,11 +50,11 @@ final class ShortLinkViewModel {
 
     func createShortLink(context: ModelContext) async -> Bool {
         guard !targetURL.isEmpty else {
-            errorMessage = String(localized: "Target URL is required")
+            errorMessage = L10n.tr("Target URL is required")
             return false
         }
         guard targetURL.isValidURL else {
-            errorMessage = String(localized: "Please enter a valid URL")
+            errorMessage = L10n.tr("Please enter a valid URL")
             return false
         }
 
@@ -90,7 +90,7 @@ final class ShortLinkViewModel {
                 )
                 context.insert(link)
                 ClipboardService.copy(data.shortURL)
-                successMessage = String(localized: "Short link created and copied!")
+                successMessage = L10n.tr("Short link created and copied!")
                 resetForm()
                 return true
             }
@@ -103,7 +103,7 @@ final class ShortLinkViewModel {
 
     func updateShortLink(_ link: ShortLink, context: ModelContext) async -> Bool {
         guard !targetURL.isEmpty, targetURL.isValidURL else {
-            errorMessage = String(localized: "Please enter a valid URL")
+            errorMessage = L10n.tr("Please enter a valid URL")
             return false
         }
 
@@ -121,7 +121,7 @@ final class ShortLinkViewModel {
             let _: APIResponse<ShortURLResponse> = try await APIClient.shared.request(.updateShortURL(request))
             link.targetURL = targetURL
             link.title = title
-            successMessage = String(localized: "Short link updated!")
+            successMessage = L10n.tr("Short link updated!")
             return true
         } catch {
             errorMessage = error.localizedDescription
@@ -137,7 +137,7 @@ final class ShortLinkViewModel {
         do {
             try await APIClient.shared.requestNoBody(.deleteShortURL(request))
             context.delete(link)
-            successMessage = String(localized: "Short link deleted")
+            successMessage = L10n.tr("Short link deleted")
             return true
         } catch {
             errorMessage = error.localizedDescription

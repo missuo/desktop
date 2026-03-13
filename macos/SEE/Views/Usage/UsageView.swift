@@ -8,8 +8,8 @@ struct UsageView: View {
             if !viewModel.isAvailable {
                 EmptyStateView(
                     icon: "chart.bar",
-                    title: String(localized: "Usage Not Available"),
-                    message: String(localized: "Usage statistics are not available on this server.")
+                    title: L10n.tr("Usage Not Available"),
+                    message: L10n.tr("Usage statistics are not available on this server.")
                 )
             } else if let usage = viewModel.usage {
                 ScrollView {
@@ -27,7 +27,7 @@ struct UsageView: View {
                             GridItem(.flexible()),
                         ], spacing: 16) {
                             UsageCard(
-                                title: String(localized: "API Calls"),
+                                title: L10n.tr("API Calls"),
                                 icon: "server.rack",
                                 dayCount: usage.apiCountDay,
                                 dayLimit: usage.apiCountDayLimit,
@@ -36,7 +36,7 @@ struct UsageView: View {
                             )
 
                             UsageCard(
-                                title: String(localized: "Links"),
+                                title: L10n.tr("Links"),
                                 icon: "link",
                                 dayCount: usage.linkCountDay,
                                 dayLimit: usage.linkCountDayLimit,
@@ -45,7 +45,7 @@ struct UsageView: View {
                             )
 
                             UsageCard(
-                                title: String(localized: "Text Shares"),
+                                title: L10n.tr("Text Shares"),
                                 icon: "doc.text",
                                 dayCount: usage.textCountDay,
                                 dayLimit: usage.textCountDayLimit,
@@ -54,7 +54,7 @@ struct UsageView: View {
                             )
 
                             UsageCard(
-                                title: String(localized: "Uploads"),
+                                title: L10n.tr("Uploads"),
                                 icon: "arrow.up.doc",
                                 dayCount: usage.uploadCountDay,
                                 dayLimit: usage.uploadCountDayLimit,
@@ -63,7 +63,7 @@ struct UsageView: View {
                             )
 
                             UsageCard(
-                                title: String(localized: "QR Codes"),
+                                title: L10n.tr("QR Codes"),
                                 icon: "qrcode",
                                 dayCount: usage.qrcodeCountDay,
                                 dayLimit: usage.qrcodeCountDayLimit,
@@ -78,13 +78,13 @@ struct UsageView: View {
                 ProgressView()
             }
         }
-        .navigationTitle(String(localized: "Usage"))
+        .navigationTitle(L10n.tr("Usage"))
         .loadingOverlay(viewModel.isLoading)
         .toolbar {
             #if os(macOS)
             ToolbarItem(placement: .automatic) {
                 Button(action: { Task { await viewModel.loadUsage() } }) {
-                    Label(String(localized: "Refresh"), systemImage: "arrow.clockwise")
+                    Label(L10n.tr("Refresh"), systemImage: "arrow.clockwise")
                 }
             }
             #endif
@@ -129,12 +129,12 @@ struct StorageCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label(String(localized: "Storage"), systemImage: "externaldrive")
+            Label(L10n.tr("Storage"), systemImage: "externaldrive")
                 .font(.headline)
 
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(String(localized: "Files"))
+                    Text(L10n.tr("Files"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Text("\(fileCount)")
@@ -144,11 +144,11 @@ struct StorageCard: View {
                 Spacer()
 
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(String(localized: "Used"))
+                    Text(L10n.tr("Used"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     if isUnlimited {
-                        Text("\(formatMb(storageUsageMb)) / \(String(localized: "Unlimited"))")
+                        Text("\(formatMb(storageUsageMb)) / \(L10n.tr("Unlimited"))")
                             .font(.subheadline.weight(.medium).monospacedDigit())
                     } else {
                         Text("\(formatMb(storageUsageMb)) / \(formatMb(storageUsageLimitMb))")
@@ -192,7 +192,7 @@ struct UsageCard: View {
 
     private func limitText(_ count: Int, _ limit: Int) -> String {
         if limit < 0 {
-            return "\(count) / \(String(localized: "Unlimited"))"
+            return "\(count) / \(L10n.tr("Unlimited"))"
         }
         return "\(count) / \(limit)"
     }
@@ -204,7 +204,7 @@ struct UsageCard: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text(String(localized: "Today"))
+                    Text(L10n.tr("Today"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Spacer()
@@ -217,7 +217,7 @@ struct UsageCard: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text(String(localized: "This Month"))
+                    Text(L10n.tr("This Month"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Spacer()

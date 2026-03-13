@@ -45,7 +45,7 @@ final class TextShareViewModel {
 
     func createTextShare(context: ModelContext) async -> Bool {
         guard !content.isEmpty else {
-            errorMessage = String(localized: "Content is required")
+            errorMessage = L10n.tr("Content is required")
             return false
         }
 
@@ -84,7 +84,7 @@ final class TextShareViewModel {
                 )
                 context.insert(share)
                 ClipboardService.copy(data.shortURL)
-                successMessage = String(localized: "Text share created and link copied!")
+                successMessage = L10n.tr("Text share created and link copied!")
                 resetForm()
                 return true
             }
@@ -97,7 +97,7 @@ final class TextShareViewModel {
 
     func updateTextShare(_ share: TextShare, context: ModelContext) async -> Bool {
         guard !content.isEmpty else {
-            errorMessage = String(localized: "Content is required")
+            errorMessage = L10n.tr("Content is required")
             return false
         }
 
@@ -116,7 +116,7 @@ final class TextShareViewModel {
             let _: APIResponse<TextResponse> = try await APIClient.shared.request(.updateText(request))
             share.content = content
             share.title = effectiveTitle
-            successMessage = String(localized: "Text share updated!")
+            successMessage = L10n.tr("Text share updated!")
             return true
         } catch {
             errorMessage = error.localizedDescription
@@ -132,7 +132,7 @@ final class TextShareViewModel {
         do {
             try await APIClient.shared.requestNoBody(.deleteText(request))
             context.delete(share)
-            successMessage = String(localized: "Text share deleted")
+            successMessage = L10n.tr("Text share deleted")
             return true
         } catch {
             errorMessage = error.localizedDescription

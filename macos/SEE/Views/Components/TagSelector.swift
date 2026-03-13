@@ -7,11 +7,11 @@ struct TagSelector: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(String(localized: "Tags"))
+            Text(L10n.tr("Tags"))
                 .font(.subheadline.weight(.medium))
 
             if tags.isEmpty {
-                Text(String(localized: "No tags available"))
+                Text(L10n.tr("No tags available"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
@@ -27,7 +27,7 @@ struct TagSelector: View {
             }
 
             if let maxSelection {
-                Text(String(localized: "\(selectedTagIDs.count)/\(maxSelection) selected"))
+                Text(L10n.format("%ld/%ld selected", selectedTagIDs.count, maxSelection))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

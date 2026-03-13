@@ -62,7 +62,7 @@ enum BackgroundUploader {
 
         Task { @MainActor in
             let center = UNUserNotificationCenter.current()
-            try? await center.requestAuthorization(options: [.alert, .sound])
+            _ = try? await center.requestAuthorization(options: [.alert, .sound])
 
             let context = ModelContext(container)
             var successCount = 0
@@ -159,29 +159,29 @@ enum BackgroundUploader {
             content.sound = .default
             if failCount == 0 {
                 if successCount == 1 {
-                    content.title = String(localized: "Upload Complete")
+                    content.title = L10n.tr("Upload Complete")
                     if isPrivate {
-                        content.body = String(localized: "Private file uploaded successfully.")
+                        content.body = L10n.tr("Private file uploaded successfully.")
                     } else {
-                        content.body = String(localized: "Link copied to clipboard.")
+                        content.body = L10n.tr("Link copied to clipboard.")
                         if let lastURL {
                             content.subtitle = lastURL
                         }
                     }
                 } else {
-                    content.title = String(localized: "Upload Complete")
+                    content.title = L10n.tr("Upload Complete")
                     if isPrivate {
-                        content.body = String(localized: "\(successCount) private files uploaded successfully.")
+                        content.body = L10n.format("%ld private files uploaded successfully.", successCount)
                     } else {
-                        content.body = String(localized: "\(successCount) files uploaded. Last link copied to clipboard.")
+                        content.body = L10n.format("%ld files uploaded. Last link copied to clipboard.", successCount)
                     }
                 }
             } else if successCount == 0 {
-                content.title = String(localized: "Upload Failed")
-                content.body = String(localized: "\(failCount) file(s) failed to upload.")
+                content.title = L10n.tr("Upload Failed")
+                content.body = L10n.format("%ld file(s) failed to upload.", failCount)
             } else {
-                content.title = String(localized: "Upload Partially Complete")
-                content.body = String(localized: "\(successCount) succeeded, \(failCount) failed.")
+                content.title = L10n.tr("Upload Partially Complete")
+                content.body = L10n.format("%ld succeeded, %ld failed.", successCount, failCount)
             }
 
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
@@ -195,6 +195,7 @@ struct SEEApp: App {
     #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
+    @StateObject private var localizationObserver = LocalizationObserver()
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -213,6 +214,7 @@ struct SEEApp: App {
     var body: some Scene {
         WindowGroup(id: "main") {
             ContentView()
+                .id(localizationObserver.version)
         }
         .modelContainer(sharedModelContainer)
         #if os(macOS)
@@ -220,12 +222,12 @@ struct SEEApp: App {
         .defaultSize(width: 900, height: 600)
         .commands {
             CommandGroup(after: .newItem) {
-                Button(String(localized: "New Short Link")) {
+                Button(L10n.tr("New Short Link")) {
                     NotificationCenter.default.post(name: .createShortLink, object: nil)
                 }
                 .keyboardShortcut("n", modifiers: [.command])
 
-                Button(String(localized: "New Text Share")) {
+                Button(L10n.tr("New Text Share")) {
                     NotificationCenter.default.post(name: .createTextShare, object: nil)
                 }
                 .keyboardShortcut("n", modifiers: [.command, .shift])
@@ -236,11 +238,13 @@ struct SEEApp: App {
         #if os(macOS)
         Settings {
             SettingsView()
+                .id(localizationObserver.version)
                 .modelContainer(sharedModelContainer)
         }
 
         MenuBarExtra("S.EE", image: "MenuBarIcon") {
             MenuBarView()
+                .id(localizationObserver.version)
                 .modelContainer(sharedModelContainer)
         }
         .menuBarExtraStyle(.window)

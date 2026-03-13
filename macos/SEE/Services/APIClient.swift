@@ -25,21 +25,21 @@ enum APIError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .unauthorized:
-            String(localized: "Unauthorized. Please check your API key.")
+            L10n.tr("Unauthorized. Please check your API key.")
         case .badRequest(let message):
             message
         case .serverError:
-            String(localized: "Server error. Please try again later.")
+            L10n.tr("Server error. Please try again later.")
         case .networkError(let message):
             message
         case .decodingError(let message):
-            String(localized: "Failed to parse response: \(message)")
+            L10n.format("Failed to parse response: %@", message)
         case .invalidBaseURL:
-            String(localized: "Invalid Base URL. Please check your settings.")
+            L10n.tr("Invalid Base URL. Please check your settings.")
         case .noAPIKey:
-            String(localized: "No API key configured. Please add your API key in Settings.")
+            L10n.tr("No API key configured. Please add your API key in Settings.")
         case .unexpectedStatusCode(let code, let message):
-            message ?? String(localized: "Unexpected response (code: \(code))")
+            message ?? L10n.format("Unexpected response (code: %ld)", code)
         }
     }
 }
@@ -225,7 +225,7 @@ actor APIClient {
 
         let (data, response) = try await performRequest(request)
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.networkError(String(localized: "Invalid response"))
+            throw APIError.networkError(L10n.tr("Invalid response"))
         }
         if httpResponse.statusCode == 401 {
             throw APIError.unauthorized
@@ -298,7 +298,7 @@ actor APIClient {
         let (data, response) = try await session.upload(for: request, from: body)
         let apiResponse: APIResponse<UploadFileResponse> = try handleResponse(data: data, response: response)
         guard let fileResponse = apiResponse.data else {
-            throw APIError.decodingError(String(localized: "Missing response data"))
+            throw APIError.decodingError(L10n.tr("Missing response data"))
         }
         return fileResponse
     }
@@ -322,7 +322,7 @@ actor APIClient {
 
     private func handleResponse<T: Decodable>(data: Data, response: URLResponse) throws -> APIResponse<T> {
         guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.networkError(String(localized: "Invalid response"))
+            throw APIError.networkError(L10n.tr("Invalid response"))
         }
 
         if httpResponse.statusCode == 401 {
@@ -336,7 +336,7 @@ actor APIClient {
             case 200:
                 return apiResponse
             case 400:
-                throw APIError.badRequest(apiResponse.message ?? String(localized: "Bad request"))
+                throw APIError.badRequest(apiResponse.message ?? L10n.tr("Bad request"))
             case 401:
                 throw APIError.unauthorized
             case 500:

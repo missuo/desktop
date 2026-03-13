@@ -17,7 +17,7 @@ struct MenuBarView: View {
             // MARK: - Shorten URL
             VStack(spacing: 8) {
                 HStack(spacing: 6) {
-                    TextField(String(localized: "Shorten a URL"), text: $targetURL)
+                    TextField(L10n.tr("Shorten a URL"), text: $targetURL)
                         .textFieldStyle(.roundedBorder)
                         .onSubmit { shorten() }
 
@@ -68,7 +68,7 @@ struct MenuBarView: View {
 
             // MARK: - Quick Actions
             VStack(spacing: 2) {
-                MenuBarButton(title: String(localized: "Paste & Shorten from Clipboard"), icon: "doc.on.clipboard") {
+                MenuBarButton(title: L10n.tr("Paste & Shorten from Clipboard"), icon: "doc.on.clipboard") {
                     if let clipboard = ClipboardService.getString() {
                         targetURL = clipboard
                         if clipboard.isValidURL {
@@ -77,16 +77,16 @@ struct MenuBarView: View {
                     }
                 }
 
-                MenuBarButton(title: String(localized: "New Text Share"), icon: "doc.text") {
+                MenuBarButton(title: L10n.tr("New Text Share"), icon: "doc.text") {
                     NSApp.activate(ignoringOtherApps: true)
                     NotificationCenter.default.post(name: .createTextShare, object: nil)
                 }
 
-                MenuBarButton(title: String(localized: "Upload from Clipboard"), icon: "photo.on.rectangle") {
+                MenuBarButton(title: L10n.tr("Upload from Clipboard"), icon: "photo.on.rectangle") {
                     uploadFromClipboard()
                 }
 
-                MenuBarButton(title: String(localized: "Upload File..."), icon: "arrow.up.doc") {
+                MenuBarButton(title: L10n.tr("Upload File..."), icon: "arrow.up.doc") {
                     uploadFile()
                 }
             }
@@ -98,7 +98,7 @@ struct MenuBarView: View {
                 Divider()
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(String(localized: "Recent"))
+                    Text(L10n.tr("Recent"))
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .padding(.horizontal, 10)
@@ -132,7 +132,7 @@ struct MenuBarView: View {
 
             // MARK: - Footer
             VStack(spacing: 2) {
-                MenuBarButton(title: String(localized: "Open S.EE"), icon: "macwindow") {
+                MenuBarButton(title: L10n.tr("Open S.EE"), icon: "macwindow") {
                     NSApp.activate(ignoringOtherApps: true)
                     if let window = NSApp.windows.first(where: { $0.title.contains("S.EE") || $0.identifier?.rawValue == "main" }) {
                         window.makeKeyAndOrderFront(nil)
@@ -141,7 +141,7 @@ struct MenuBarView: View {
                     }
                 }
 
-                MenuBarButton(title: String(localized: "Settings..."), icon: "gearshape") {
+                MenuBarButton(title: L10n.tr("Settings..."), icon: "gearshape") {
                     NSApp.activate(ignoringOtherApps: true)
                     NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
                 }
@@ -150,7 +150,7 @@ struct MenuBarView: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 2)
 
-                MenuBarButton(title: String(localized: "Quit S.EE"), icon: "power") {
+                MenuBarButton(title: L10n.tr("Quit S.EE"), icon: "power") {
                     NSApp.terminate(nil)
                 }
             }
@@ -170,7 +170,7 @@ struct MenuBarView: View {
     private func shorten() {
         guard !targetURL.isEmpty else { return }
         guard targetURL.isValidURL else {
-            errorMessage = String(localized: "Please enter a valid URL")
+            errorMessage = L10n.tr("Please enter a valid URL")
             return
         }
 

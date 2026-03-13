@@ -13,12 +13,12 @@ enum SidebarItem: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .shortLinks: String(localized: "Short Links")
-        case .textSharing: String(localized: "Text Sharing")
-        case .fileUpload: String(localized: "File Upload")
-        case .tags: String(localized: "Tags")
-        case .usage: String(localized: "Usage")
-        case .settings: String(localized: "Settings")
+        case .shortLinks: L10n.tr("Short Links")
+        case .textSharing: L10n.tr("Text Sharing")
+        case .fileUpload: L10n.tr("File Upload")
+        case .tags: L10n.tr("Tags")
+        case .usage: L10n.tr("Usage")
+        case .settings: L10n.tr("Settings")
         }
     }
 
@@ -62,22 +62,22 @@ struct ContentView: View {
         .frame(minWidth: 700, minHeight: 450)
         #else
         TabView {
-            Tab(String(localized: "Short Links"), systemImage: "link") {
+            Tab(L10n.tr("Short Links"), systemImage: "link") {
                 NavigationStack {
                     ShortLinkListView()
                 }
             }
-            Tab(String(localized: "Text"), systemImage: "doc.text") {
+            Tab(L10n.tr("Text"), systemImage: "doc.text") {
                 NavigationStack {
                     TextShareListView()
                 }
             }
-            Tab(String(localized: "Upload"), systemImage: "arrow.up.doc") {
+            Tab(L10n.tr("Upload"), systemImage: "arrow.up.doc") {
                 NavigationStack {
                     FileUploadView()
                 }
             }
-            Tab(String(localized: "More"), systemImage: "ellipsis") {
+            Tab(L10n.tr("More"), systemImage: "ellipsis") {
                 NavigationStack {
                     MoreView(hasAPIKey: $hasAPIKey)
                 }
@@ -102,7 +102,7 @@ struct ContentView: View {
         case .settings:
             SettingsView(hasAPIKey: $hasAPIKey)
         case nil:
-            Text(String(localized: "Select an item from the sidebar"))
+            Text(L10n.tr("Select an item from the sidebar"))
                 .foregroundStyle(.secondary)
         }
     }
@@ -163,21 +163,21 @@ struct OnboardingView: View {
                     Text("S.EE")
                         .font(.system(size: 28, weight: .bold))
 
-                    Text(String(localized: "URL Shortener, Text Sharing & File Hosting"))
+                    Text(L10n.tr("URL Shortener, Text Sharing & File Hosting"))
                         .font(.title3)
                         .foregroundStyle(.secondary)
                 }
 
                 // API Token hint
                 VStack(spacing: 6) {
-                    Text(String(localized: "To get started, you need an API Token."))
+                    Text(L10n.tr("To get started, you need an API Token."))
                         .font(.body)
                         .foregroundStyle(.secondary)
                     Link(destination: URL(string: "https://s.ee/user/developers/")!) {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.up.right.square")
                                 .font(.body)
-                            Text(String(localized: "Get your API Token at s.ee"))
+                            Text(L10n.tr("Get your API Token at s.ee"))
                                 .font(.body.weight(.medium))
                         }
                     }
@@ -188,7 +188,7 @@ struct OnboardingView: View {
                 VStack(spacing: 20) {
                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 16) {
                         GridRow {
-                            Text(String(localized: "Base URL"))
+                            Text(L10n.tr("Base URL"))
                                 .font(.body)
                                 .gridColumnAlignment(.trailing)
                             TextField("https://s.ee/api/v1/", text: $baseURL)
@@ -197,14 +197,14 @@ struct OnboardingView: View {
                         }
 
                         GridRow {
-                            Text(String(localized: "API Key"))
+                            Text(L10n.tr("API Key"))
                                 .font(.body)
                                 .gridColumnAlignment(.trailing)
                             HStack(spacing: 8) {
-                                SecureField(String(localized: "Enter your API key"), text: $apiKey)
+                                SecureField(L10n.tr("Enter your API key"), text: $apiKey)
                                     .textFieldStyle(.roundedBorder)
                                     .focused($focusedField, equals: .apiKey)
-                                Button(String(localized: "Paste")) {
+                                Button(L10n.tr("Paste")) {
                                     if let clipboard = ClipboardService.getString() {
                                         apiKey = clipboard
                                     }
@@ -225,7 +225,7 @@ struct OnboardingView: View {
                             .controlSize(.small)
                             .frame(width: 140)
                     } else {
-                        Text(String(localized: "Verify & Continue"))
+                        Text(L10n.tr("Verify & Continue"))
                             .frame(width: 140)
                     }
                 }
@@ -271,7 +271,7 @@ struct OnboardingView: View {
                     Text("S.EE")
                         .font(.title.bold())
 
-                    Text(String(localized: "URL Shortener, Text Sharing & File Hosting"))
+                    Text(L10n.tr("URL Shortener, Text Sharing & File Hosting"))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
@@ -279,14 +279,14 @@ struct OnboardingView: View {
 
                 // API Token hint
                 VStack(spacing: 8) {
-                    Text(String(localized: "To get started, you need an API Token."))
+                    Text(L10n.tr("To get started, you need an API Token."))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     Link(destination: URL(string: "https://s.ee/user/developers/")!) {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.up.right.square")
                                 .font(.subheadline)
-                            Text(String(localized: "Get your API Token at s.ee"))
+                            Text(L10n.tr("Get your API Token at s.ee"))
                                 .font(.subheadline.weight(.medium))
                         }
                     }
@@ -296,7 +296,7 @@ struct OnboardingView: View {
                 // Form
                 VStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(String(localized: "Base URL"))
+                        Text(L10n.tr("Base URL"))
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.secondary)
                         TextField("https://s.ee/api/v1/", text: $baseURL)
@@ -308,16 +308,16 @@ struct OnboardingView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(String(localized: "API Key"))
+                        Text(L10n.tr("API Key"))
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.secondary)
                         HStack(spacing: 8) {
-                            SecureField(String(localized: "Enter your API key"), text: $apiKey)
+                            SecureField(L10n.tr("Enter your API key"), text: $apiKey)
                                 .textFieldStyle(.roundedBorder)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                                 .focused($focusedField, equals: .apiKey)
-                            Button(String(localized: "Paste")) {
+                            Button(L10n.tr("Paste")) {
                                 if let clipboard = ClipboardService.getString() {
                                     apiKey = clipboard
                                 }
@@ -337,7 +337,7 @@ struct OnboardingView: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 20)
                     } else {
-                        Text(String(localized: "Verify & Continue"))
+                        Text(L10n.tr("Verify & Continue"))
                             .frame(maxWidth: .infinity)
                     }
                 }
@@ -381,7 +381,7 @@ struct OnboardingView: View {
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
-                Text(String(localized: "API key verified successfully!"))
+                Text(L10n.tr("API key verified successfully!"))
             }
             .font(.caption)
             .foregroundStyle(.green)
@@ -446,22 +446,22 @@ struct MoreView: View {
             NavigationLink {
                 TagsView()
             } label: {
-                Label(String(localized: "Tags"), systemImage: "tag")
+                Label(L10n.tr("Tags"), systemImage: "tag")
             }
 
             NavigationLink {
                 UsageView()
             } label: {
-                Label(String(localized: "Usage"), systemImage: "chart.bar")
+                Label(L10n.tr("Usage"), systemImage: "chart.bar")
             }
 
             NavigationLink {
                 SettingsView(hasAPIKey: $hasAPIKey)
             } label: {
-                Label(String(localized: "Settings"), systemImage: "gearshape")
+                Label(L10n.tr("Settings"), systemImage: "gearshape")
             }
         }
-        .navigationTitle(String(localized: "More"))
+        .navigationTitle(L10n.tr("More"))
     }
 }
 #endif

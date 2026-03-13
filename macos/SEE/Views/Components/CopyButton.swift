@@ -13,7 +13,7 @@ struct CopyButton: View {
                 .contentTransition(.symbolEffect(.replace))
         }
         .buttonStyle(.borderless)
-        .help(copied ? String(localized: "Copied!") : String(localized: "Copy link"))
+        .help(copied ? L10n.tr("Copied!") : L10n.tr("Copy link"))
     }
 
     private func copy() {
